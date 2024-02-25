@@ -1,0 +1,114 @@
+/* @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"); */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;800;900&display=swap');
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  /* font-family: "Poppins"; */
+  font-family: 'Inter', sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  text-wrap: balance;
+  font-size: 15px;
+}
+
+.bx-shadow {
+  box-shadow: 5px 5px 8px #bebebe,
+    -5px -5px 8px #ffffff;
+}
+
+.active {
+  color: #FCAF3C;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+
+}
+
+.rpv-core__display--block-medium {
+  display: none !important;
+}
+
+.rpv-core__display--block {
+  display: none !important;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  margin-right: 2px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #FF663B;
+  border-radius: 50px;
+  /* text-transform: ; */
+  margin-right: 2px;
+}
+
+.main-container {
+  max-width: 1400px;
+  margin: auto auto;
+}
+
+
+@layer base {
+  .main-container {
+    @apply px-2 md:px-10 lg:px-10
+  }
+
+  label {
+    @apply flex flex-col
+  }
+
+  input, select, textarea {
+    @apply bg-gray-50 border p-2 w-full rounded-md py-3 focus:outline-[#FF663B]
+  }
+}
+
+.bg {
+  background-image: linear-gradient(to left, #ee390f 0%, #f9b700 51%, #ee390f 100%);
+  background-size: 200% auto;
+  transition: all .5s ease-in-out;
+  color: #fff;
+}
+
+.bg_liner {
+  background: linear-gradient(to left, #ee390f 0%, #f9b700 51%, #ee390f 100%);
+}
+
+.text-bg {
+  background: linear-gradient(to left, #ee390f 0%, #f9b700 51%, #ee390f 100%);
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+
+}
+
+.bg:hover {
+  background-position: 100% 0;
+  transition: all .5s ease-in-out;
+}
+
+
+@media screen and (min-width:1480px) {
+  .main-container {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
