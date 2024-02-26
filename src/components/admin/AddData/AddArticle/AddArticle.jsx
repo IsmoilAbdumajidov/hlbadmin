@@ -5,21 +5,37 @@ import { useState } from 'react';
 import AccardionArticle from '../../../accordion/AccardionArticle';
 import { addArticle, getArticles, patchArticle } from '../../../../hooks/AdminApi';
 import AddKursForm from '../AddKurs/AddKursForm';
-
-const initialValueObjs = { title: "", poster_image: "", paid: "", price: "" }
+import * as Yup from "yup"
 
 const AddArticle = ({ courseData }) => {
+
   const [open, setOpen] = useState(false);
   const [isPost, setIsPost] = useState("")
   const [selectId, setSelectId] = useState(0)
-  const [initialValues, setInitialValues] = useState(initialValueObjs)
   const [selectLesson, setSelectLesson] = useState(false)
   const [change, setOnChange] = useState(false)
-  const { mutate:getArticleMutate, data } = getArticles()
 
+  // initial values
+  const initialValueObjs = {
+    title: "",
+    poster_image: "",
+    price: "",
+    paid: "",
+  }
+
+  // initial values state
+  const [initialValues, setInitialValues] = useState(initialValueObjs)
+
+  const { mutate: getArticleMutate, data } = getArticles()
   const { mutate: articleMutate, isSuccess: addSuccess } = addArticle()
-
   const { mutate: patchMutate, isSuccess } = patchArticle()
+
+  // validation with Yup
+  const validationSchema = Yup.object({
+    title: Yup.string().required("Ma'lumot kiritilmadi"),
+    poster_image: Yup.mixed().required("Ma'lumot kiritilmadi"),
+    price: Yup.string().when("paid", { is: true, then: () => Yup.string().required("Ma'lumot kiritilmadi"), }),
+  })
 
   useEffect(() => {
     if (isSuccess || addSuccess) {
@@ -30,28 +46,32 @@ const AddArticle = ({ courseData }) => {
     }
   }, [isSuccess, addSuccess])
 
-  const onSubmit = () => {
+  // onsubmit function
+  const onSubmit = (values, onSubmitProps) => {
     const formData = new FormData();
-    formData.append('file', initialValues.poster_image);
+    formData.append('file', values.poster_image);
     if (isPost) {
       articleMutate(
         {
           number: data.data.length + 1,
           lesson: selectLesson || courseData[selectId]?.lessons[0]?.id,
-          file: initialValues.poster_image,
-          title: initialValues.title
+          file: values.poster_image,
+          title: values.title
         })
     }
     else {
-      console.log(initialValues);
       patchMutate(
         {
-          title: initialValues.title,
-          file: initialValues?.poster_image,
-          id: initialValues.id
+          title: values.title,
+          file: values?.poster_image,
+          id: values.id
         }
       )
     }
+    setTimeout(() => {
+      onSubmitProps.setSubmitting(false)
+      onSubmitProps.resetForm()
+    }, 3000);
   }
 
   useEffect(() => {
@@ -74,7 +94,7 @@ const AddArticle = ({ courseData }) => {
     setIsPost(false)
   }
 
-  const handleOpen = () => { setOpen(!open), setIsPost(true), setInitialValues("") };
+  const handleOpen = () => { setOpen(!open), setIsPost(true) };
   return (
     <div className='mt-10'>
       <div className='flex my-7 justify-between items-center gap-5'>
@@ -102,7 +122,7 @@ const AddArticle = ({ courseData }) => {
       {
         courseData[selectId]?.lessons.length ?
           <div>
-            <AddKursForm onSubmit={onSubmit} initialValues={initialValues} setInitialValues={setInitialValues} handleOpen={handleOpen} open={open} title={"Article qo'shish"} />
+            <AddKursForm isPost={isPost} validationSchema={validationSchema} onSubmit={onSubmit} initialValues={initialValues} handleOpen={handleOpen} open={open} title={"Article qo'shish"} />
             <div className='flex justify-end'>
               <Button variant="gradient" color="green" onClick={handleOpen}>
                 <span>Mavzu Qo'shish</span>

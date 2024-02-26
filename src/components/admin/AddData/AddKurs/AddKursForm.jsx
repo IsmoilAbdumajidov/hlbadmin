@@ -22,7 +22,7 @@ const AddKursForm = ({validationSchema, handleOpen, onSubmit, open, initialValue
                             }
                             <FormControl control={"checkbox"} label={"Pullik"} name={"paid"} />
                             </div>
-                            {formik.values.paid && <FormControl control={"input"} label={"Kurs narxi"} name={"price"} placeholder={"Kurs sarlavhasini kiriting"} />}
+                            {formik.values.paid ? <FormControl control={"input"} label={"Kurs narxi"} name={"price"} placeholder={"Kurs sarlavhasini kiriting"} />:formik.values.price=""}
                             <div className='flex justify-end gap-3'>
                                 <Button variant="text" color="red" onClick={handleOpen} className="mr-1">
                                     <span>Bekor qilish</span>

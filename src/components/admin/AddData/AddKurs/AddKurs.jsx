@@ -5,44 +5,42 @@ import AccordionAdmin from '../../../accordion/AccordionAdmin';
 import { patchCourse, postCourse } from '../../../../hooks/AdminApi';
 import * as Yup from "yup"
 
-const initialValueObjs = {
-    title: "",
-    poster_image: "",
-    price: "",
-    certification: "",
-    paid: "",
-
-}
 
 const AddKurs = ({ courseData }) => {
     const [open, setOpen] = useState(false);
     const [isPost, setIsPost] = useState("")
-    // inital valus
+
+    // initial values
+    const initialValueObjs = {
+        title: "",
+        poster_image: "",
+        price: "",
+        certification: "",
+        paid: "",
+
+    }
+
+    // initial values state
     const [initialValues, setInitialValues] = useState(initialValueObjs)
 
-    const { mutate, isSuccess } = postCourse()
-
-    const { mutate: patchMutate } = patchCourse()
+    const { mutate:postMutate, isSuccess:postSuccess } = postCourse()
+    const { mutate: patchMutate, isSuccess:patchSuccess } = patchCourse()
 
     // validation with Yup
     const validationSchema = Yup.object({
         title: Yup.string().required("Ma'lumot kiritilmadi"),
         poster_image: Yup.mixed().required("Ma'lumot kiritilmadi"),
         price: Yup.string().when("paid", { is: true, then: () => Yup.string().required("Ma'lumot kiritilmadi"), }),
-        // paid: Yup.number().required("Ma'lumot kiritilmadi"),
     })
 
     // onsubmit function
     const onSubmit = (values, onSubmitProps) => {
         const formData = new FormData();
-        console.log("Form data", values)
-
         formData.append('image', values.poster_image);
         if (isPost) {
-            mutate(values)
+            postMutate(values)
         }
         else {
-            console.log(values);
             patchMutate(
                 {
                     title: values.title,
@@ -56,17 +54,21 @@ const AddKurs = ({ courseData }) => {
             onSubmitProps.resetForm()
         }, 3000);
     }
-
+    
+    // close module when submitted success
     useEffect(() => {
-        if (isSuccess) {
+        if (postSuccess || patchSuccess) {
             setOpen(false)
         }
-    }, [isSuccess])
+    }, [postSuccess,patchSuccess])
+
+    // edit function
     const EditCourse = (element) => {
         setOpen(true)
         setInitialValues({ id: element.id, title: element.title, price: element.price, certification: element.certification, paid: element.paid })
     }
 
+    // toggle module
     const handleOpen = () => { setOpen(!open), setIsPost(true) };
     return (
         <div className='mt-10'>

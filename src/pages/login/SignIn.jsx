@@ -20,7 +20,7 @@ const SignIn = () => {
     // validation
     const validationSchema = Yup.object({
         username: Yup.string().required("Ma'lumot kiritlmadi"),
-        password: Yup.string().required("Ma'lumot kiritilmadi").max(8,"8 tadan ortiq parol kiritilmaydi").min(3,"3 tadan kam ma'lumot kirtilmaydi")
+        password: Yup.string().required("Ma'lumot kiritilmadi").max(8,"8 tadan kam belgi kiritishingiz kerak").min(3,"4 tadan ko'p belgi kiritishingiz kerak")
     })
     // onsubmit function
     const onSubmit = (values, onSubmitProps) => {

@@ -5,7 +5,7 @@ import TextError from './TextError';
 const Checkbox = ({ label, name, ...rest }) => {
     return (
         <div>
-            <Field name={name}>
+            <Field name={name} id={name}>
                 {({ field, form: { setFieldValue } }) => {
                     const { value } = field
                     return(

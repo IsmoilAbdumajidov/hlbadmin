@@ -1,62 +1,74 @@
 import React, { useState } from 'react'
-import {
-    Accordion,
-    AccordionHeader,
-    AccordionBody,
-    Button,
-} from "@material-tailwind/react";
+import { Accordion, AccordionHeader, AccordionBody, Button, } from "@material-tailwind/react";
 import { IoIosArrowDown } from "react-icons/io";
 import { CiEdit } from "react-icons/ci";
 import { VscTrash } from "react-icons/vsc";
-import Module from '../module/Module';
-import InputComponent from '../input/InputComponent';
 import { deleteCourse, deleteLesson, patchLesson, postLesson } from '../../hooks/AdminApi';
 import AccHeaderKurs from '../admin/AddData/AddKurs/AccHeaderKurs';
 import AddLessonForm from '../admin/AddData/AddKurs/AddLessonForm';
+import * as Yup from "yup"
+import { useEffect } from 'react';
+
+// accardion icon component
 function Icon({ id, open }) {
     return (
         <IoIosArrowDown className={`${id === open ? "rotate-180" : ""} h-5 w-5 transition-transform`} />
     );
 }
 
-const AccordionAdmin = ({ data, edit, setIsPost }) => {
-    const handleOpen = (value) => setOpen(open === value ? 0 : value);
 
+const AccordionAdmin = ({ data, edit, setIsPost }) => {
+    
     const [open, setOpen] = useState(0);
     const [openModule, setOpenModule] = useState(false);
-    const [initialValues, setInitialValues] = useState({ title: "", isPaid: false, price: "" })
     const [post, setPost] = useState(false)
+    
+    // initial values
+    const initialValueObjs = { title: "", isPaid: false, price: "" }
 
+    // initial values state
+    const [initialValues, setInitialValues] = useState(initialValueObjs)
 
-    const { mutate } = postLesson()
-    const { mutate: patchMutate } = patchLesson()
-    const onSubmit = (e) => {
-        e.preventDefault()
-
-        if (post) {
-            mutate({
-                course: data?.id,
-                number: data?.lessons.length + 1,
-                title: initialValues.title,
-                price: initialValues.price,
-                paid: initialValues.isPaid
-            })
-        }
-        else {
-            console.log(initialValues);
-            patchMutate(
-                {
-                    id: initialValues.id,
-                    title: initialValues.title,
-                    price: +initialValues.price,
-                    paid: initialValues.isPaid
-                }
-            )
-        }
-    }
+    const { mutate:postMutate, isSuccess:postSuccess } = postLesson()
+    const { mutate: patchMutate, isSuccess:patchSuccess } = patchLesson()
     const { mutate: deleteL } = deleteLesson()
     const { mutate: deleteC } = deleteCourse()
 
+    // validation with Yup
+    const validationSchema = Yup.object({
+        title: Yup.string().required("Ma'lumot kiritilmadi"),
+        price: Yup.string().when("isPaid", { is: true, then: () => Yup.string().required("Ma'lumot kiritilmadi"), }),
+    })
+
+    // onsubmit function
+    const onSubmit = (values, onSubmitProps) => {
+        console.log("Form data", values)
+        if (post) {
+            postMutate({
+                course: data?.id,
+                number: data?.lessons.length + 1,
+                title: values.title,
+                price: values.price,
+                paid: values.isPaid
+            })
+        }
+        else {
+            patchMutate(
+                {
+                    id: values.id,
+                    title: values.title,
+                    price: +values.price,
+                    paid: values.isPaid
+                }
+            )
+        }
+        setTimeout(() => {
+            onSubmitProps.setSubmitting(false)
+            onSubmitProps.resetForm()
+        }, 3000);
+    }
+
+    // delete function
     const deleteHandler = (type, id) => {
         if (type === "course") {
             deleteC(id)
@@ -65,24 +77,34 @@ const AccordionAdmin = ({ data, edit, setIsPost }) => {
             deleteL(id)
         }
     }
+    // close module when submitted success
+    useEffect(() => {
+        if (postSuccess || patchSuccess) {
+            setOpenModule(false)
+        }
+    }, [postSuccess,patchSuccess])
+
+    // edit lesson
     const EditLesson = (element) => {
         // console.log(element);
         setInitialValues({ id: element.id, title: element.title, price: element.price, isPaid: element.paid })
         setOpenModule(true)
     }
+    // toggle accardion
+    const handleOpen = (value) => setOpen(open === value ? 0 : value);
 
-
-    const handleOpenModule = () => { setOpenModule(!openModule), setPost(true), setInitialValues("") };
+    // toggle module
+    const handleOpenModule = () => { setOpenModule(!openModule), setPost(true) };
     return (
         <>
             <Accordion open={open === 1}>
                 <AccordionHeader className='flex  min-w-[900px] w-full  py-2 items-center border-b border-gray-400'>
-                    <AccHeaderKurs  data={data} edit={edit} deleteHandler={deleteHandler} setIsPost={setIsPost} handleOpen={handleOpen}>
+                    <AccHeaderKurs data={data} edit={edit} deleteHandler={deleteHandler} setIsPost={setIsPost} handleOpen={handleOpen}>
                         <Icon id={1} open={open} />
                     </AccHeaderKurs>
                 </AccordionHeader>
                 <AccordionBody className="border-b  flex flex-col gap-2 px-3 py-2 border-gray-400">
-                    <AddLessonForm onSubmit={onSubmit} setInitialValues={setInitialValues} initialValues={initialValues} handleOpen={handleOpenModule} open={openModule} />
+                    <AddLessonForm post={post} validationSchema={validationSchema} onSubmit={onSubmit} initialValues={initialValues} handleOpen={handleOpenModule} open={openModule} />
                     <div className='flex justify-between w-full items-center'>
                         <div className='text-black font-semibold'>Darslar:</div>
                         <Button variant="gradient" color="green" onClick={handleOpenModule}>
