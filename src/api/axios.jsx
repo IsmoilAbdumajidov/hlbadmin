@@ -2,8 +2,9 @@ import axios from "axios";
 import { clearLS, getFromLS } from "../utils/localStorage";
 
 export const instance = axios.create({
-    // baseURL: "https://api.int-audit.uz/",
-    baseURL: "https://hlbplatform.pythonanywhere.com/api/",
+    baseURL: "https://api.int-audit.uz/",
+    // baseURL: "https://hlbplatform.pythonanywhere.com/api/",
+    // baseURL: "https://d213-188-113-239-116.ngrok-free.app/api/",
 })
 
 

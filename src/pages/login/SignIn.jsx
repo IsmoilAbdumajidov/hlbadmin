@@ -20,7 +20,7 @@ const SignIn = () => {
     // validation
     const validationSchema = Yup.object({
         username: Yup.string().required("Ma'lumot kiritlmadi"),
-        password: Yup.string().required("Ma'lumot kiritilmadi").max(8,"8 tadan kam belgi kiritishingiz kerak").min(3,"4 tadan ko'p belgi kiritishingiz kerak")
+        password: Yup.string().required("Ma'lumot kiritilmadi")
     })
     // onsubmit function
     const onSubmit = (values, onSubmitProps) => {
@@ -41,7 +41,7 @@ const SignIn = () => {
                 (
                     <Form className='flex flex-col gap-6'>
                         <FormControl control={"input"} name={"username"} label={"Username"} placeholder={"Usernameni kiriting"} />
-                        <FormControl maxLength={8} control={"password"} name={"password"} label={"Password"} placeholder={"Parolingizni kiriting"} />
+                        <FormControl control={"password"} name={"password"} label={"Password"} placeholder={"Parolingizni kiriting"} />
                         <button disabled={!formik.isValid || formik.isSubmitting} type='submit' className='bg mt-6 rounded-md py-3 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-[#FF663B] text-white '>Submit</button>
                     </Form>
                 )
