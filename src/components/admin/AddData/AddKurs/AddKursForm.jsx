@@ -15,7 +15,7 @@ const AddKursForm = ({validationSchema, handleOpen, onSubmit, open, initialValue
                     return (
                         <Form className='flex flex-col gap-6'>
                             <FormControl control={"input"} label={"Sarlavhasi"} name={"title"} placeholder={"Kurs sarlavhasini kiriting"} />
-                            <FormControl control={"file"} accept=".jpg" label={"Kurs Rasmi"} name={"poster_image"} />
+                            <FormControl control={"file"} accept={`${type==="kurs" ? ".jpg" : ".pdf"}`} label={"Kurs Rasmi"} name={"poster_image"} />
                             <div className='flex gap-10'>
                             {
                                 type==="kurs" ? <FormControl control={"checkbox"} label={"Sertifikat"} name={"certification"} /> : ""

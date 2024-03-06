@@ -16,15 +16,15 @@ const AddKurs = ({ courseData }) => {
         poster_image: "",
         price: "",
         certification: "",
-        paid: "",
+        paid: 0,
 
     }
 
     // initial values state
     const [initialValues, setInitialValues] = useState(initialValueObjs)
 
-    const { mutate:postMutate, isSuccess:postSuccess } = postCourse()
-    const { mutate: patchMutate, isSuccess:patchSuccess } = patchCourse()
+    const { mutate: postMutate, isSuccess: postSuccess } = postCourse()
+    const { mutate: patchMutate, isSuccess: patchSuccess } = patchCourse()
 
     // validation with Yup
     const validationSchema = Yup.object({
@@ -54,13 +54,13 @@ const AddKurs = ({ courseData }) => {
             onSubmitProps.resetForm()
         }, 3000);
     }
-    
+
     // close module when submitted success
     useEffect(() => {
         if (postSuccess || patchSuccess) {
             setOpen(false)
         }
-    }, [postSuccess,patchSuccess])
+    }, [postSuccess, patchSuccess])
 
     // edit function
     const EditCourse = (element) => {
@@ -69,7 +69,7 @@ const AddKurs = ({ courseData }) => {
     }
 
     // toggle module
-    const handleOpen = () => { setOpen(!open), setIsPost(true) };
+    const handleOpen = () => { setOpen(!open), setIsPost(true), setInitialValues(initialValueObjs) };
     return (
         <div className='mt-10'>
             <AddKursForm isPost={isPost} type={"kurs"} open={open} handleOpen={handleOpen} validationSchema={validationSchema} onSubmit={onSubmit} initialValues={initialValues} title={"Kurs qo'shish"} />

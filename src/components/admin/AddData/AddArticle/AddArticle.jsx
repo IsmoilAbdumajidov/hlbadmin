@@ -26,7 +26,13 @@ const AddArticle = ({ courseData }) => {
   // initial values state
   const [initialValues, setInitialValues] = useState(initialValueObjs)
 
-  const { mutate: getArticleMutate, data } = getArticles()
+  // const { mutate: getArticleMutate, data } = getArticles(
+  const { refetch, data } = getArticles(
+    {
+      course: courseData[selectId]?.id,
+      lesson: selectLesson || courseData[selectId]?.lessons[0]?.id
+    }
+  )
   const { mutate: articleMutate, isSuccess: addSuccess } = addArticle()
   const { mutate: patchMutate, isSuccess } = patchArticle()
 
@@ -67,34 +73,35 @@ const AddArticle = ({ courseData }) => {
           id: values.id
         }
       )
+      console.log(initialValues);
     }
+
     setTimeout(() => {
       onSubmitProps.setSubmitting(false)
       onSubmitProps.resetForm()
     }, 3000);
+    
+    
   }
 
   useEffect(() => {
     const orderCourseHandler = () => {
       if (selectLesson !== undefined && courseData[selectId]?.lessons[0]?.id !== undefined) {
-        getArticleMutate(
-          {
-            course: courseData[selectId]?.id,
-            lesson: selectLesson || courseData[selectId]?.lessons[0]?.id
-          }
-        )
+        refetch()
       }
     }
     orderCourseHandler()
   }, [change, selectId, selectLesson])
 
+  // edit course
   const EditCourse = (element) => {
     setInitialValues({ id: element.id, title: element.title })
     setOpen(true)
     setIsPost(false)
   }
 
-  const handleOpen = () => { setOpen(!open), setIsPost(true) };
+  // toggle module
+  const handleOpen = () => { setOpen(!open), setIsPost(true), setInitialValues(initialValueObjs) };
   return (
     <div className='mt-10'>
       <div className='flex my-7 justify-between items-center gap-5'>

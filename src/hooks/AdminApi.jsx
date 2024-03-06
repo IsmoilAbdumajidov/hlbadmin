@@ -5,7 +5,7 @@ import { toast } from "react-toastify"
 export const getCourseAdmin = () => {
     return useQuery(["courseAdmin"], () => instance.get(`admin/get_courses/`), {
         refetchOnWindowFocus: false,
-        // onSuccess: (data) => console.log(data),
+        onSuccess: (data) => console.log(data),
         onError: (error) => {
             toast.error("Qandaydir xatolik bor")
             console.log(error);
@@ -139,10 +139,12 @@ export const deleteCourse = () => {
     )
 
 }
-export const getArticles = () => {
-    return useMutation((data) => instance.get(`admin/get_articles/?course_id=${data.course}&lesson_id=${data.lesson}`,
+export const getArticles = ({course,lesson}) => {
+    // return useMutation((data) => instance.get(`admin/get_articles/?course_id=${data.course}&lesson_id=${data.lesson}`,
+    return useQuery(["getArticle"], () => instance.get(`admin/get_articles/?course_id=${course}&lesson_id=${lesson}`,
     ),
         {
+            refetchOnWindowFocus: false,
             onSuccess: (data) => {
                 // console.log(data);
             },
@@ -154,7 +156,7 @@ export const getArticles = () => {
 
 }
 export const addArticle = () => {
-    // const queryClient = useQueryClient()
+    const queryClient = useQueryClient()
     return useMutation((data) => instance.post("admin/add_article/", data,
         {
             headers: {
@@ -164,7 +166,7 @@ export const addArticle = () => {
     ),
         {
             onSuccess: (data) => {
-                // queryClient.invalidateQueries({ queryKey: ["courseAdmin"] });
+                queryClient.invalidateQueries({ queryKey: ["getArticle"] });
                 // console.log(data);
                 // navigate('/user-page/my-kurs')
                 toast.success("Yangi Article qo'shildi")
@@ -179,13 +181,13 @@ export const addArticle = () => {
 }
 
 export const deleteArticle = () => {
-    // const queryClient = useQueryClient()
+    const queryClient = useQueryClient()
     return useMutation((data) => instance.delete(`admin/delete_article/${data}/`,
 
     ),
         {
             onSuccess: (data) => {
-                // queryClient.invalidateQueries({ queryKey: ["courseAdmin"] });
+                queryClient.invalidateQueries({ queryKey: ["getArticle"] });
                 // console.log(data);
                 // navigate('/user-page/my-kurs')
                 toast.success("Kurs o'chirildi")
@@ -200,6 +202,7 @@ export const deleteArticle = () => {
 }
 
 export const patchArticle = () => {
+    const queryClient = useQueryClient()
     return useMutation((data) => instance.patch(`admin/update_article/${data.id}/`, data,
         {
             headers: {
@@ -209,6 +212,7 @@ export const patchArticle = () => {
     ),
         {
             onSuccess: (data) => {
+                queryClient.invalidateQueries({ queryKey: ["getArticle"] });
                 // console.log(data);
                 toast.success("Article o'zgartiriladi")
             },
@@ -222,10 +226,12 @@ export const patchArticle = () => {
 }
 
 export const postQuiz = () => {
+    const queryClient = useQueryClient()
     return useMutation((data) => instance.post("admin/add_quiz/", data,
     ),
         {
             onSuccess: (data) => {
+                queryClient.invalidateQueries({ queryKey: ["getArticle"] });
                 // console.log(data);
                 toast.success("Yangi quiz qo'shildi")
             },
@@ -239,10 +245,12 @@ export const postQuiz = () => {
 }
 
 export const patchQuiz = () => {
+    const queryClient = useQueryClient()
     return useMutation((data) => instance.patch(`admin/update_quiz/${data.id}/`, data,
     ),
         {
             onSuccess: (data) => {
+                queryClient.invalidateQueries({ queryKey: ["getArticle"] });
                 // console.log(data);
                 toast.success("Quiz o'zgartirildi")
             },
@@ -257,10 +265,12 @@ export const patchQuiz = () => {
 
 
 export const deleteQuiz = () => {
+    const queryClient = useQueryClient()
     return useMutation((data) => instance.delete(`admin/delete_quiz/${data}/`,
     ),
         {
             onSuccess: (data) => {
+                queryClient.invalidateQueries({ queryKey: ["getArticle"] });
                 // console.log(data);
                 toast.success("Quiz o'chirildi")
             },

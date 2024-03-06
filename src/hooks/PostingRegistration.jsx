@@ -17,6 +17,9 @@ export const useLogin = ({ navigate }) => {
                     addToLS("r-token", data?.data?.refresh)
                     toast.success("Kirish muvaffaqiyatli bajarildi");
                 }
+                else{
+                    toast.error("Bunday foydalanuvchi mavjud emas")
+                }
             },
             onError: (error) => {
                 console.log(error);

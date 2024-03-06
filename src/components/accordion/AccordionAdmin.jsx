@@ -18,19 +18,19 @@ function Icon({ id, open }) {
 
 
 const AccordionAdmin = ({ data, edit, setIsPost }) => {
-    
+
     const [open, setOpen] = useState(0);
     const [openModule, setOpenModule] = useState(false);
     const [post, setPost] = useState(false)
-    
+
     // initial values
-    const initialValueObjs = { title: "", isPaid: false, price: "" }
+    const initialValueObjs = { title: "", isPaid: false, price: 0 }
 
     // initial values state
     const [initialValues, setInitialValues] = useState(initialValueObjs)
 
-    const { mutate:postMutate, isSuccess:postSuccess } = postLesson()
-    const { mutate: patchMutate, isSuccess:patchSuccess } = patchLesson()
+    const { mutate: postMutate, isSuccess: postSuccess } = postLesson()
+    const { mutate: patchMutate, isSuccess: patchSuccess } = patchLesson()
     const { mutate: deleteL } = deleteLesson()
     const { mutate: deleteC } = deleteCourse()
 
@@ -48,7 +48,7 @@ const AccordionAdmin = ({ data, edit, setIsPost }) => {
                 course: data?.id,
                 number: data?.lessons.length + 1,
                 title: values.title,
-                price: values.price,
+                price: values.price || 0,
                 paid: values.isPaid
             })
         }
@@ -82,7 +82,7 @@ const AccordionAdmin = ({ data, edit, setIsPost }) => {
         if (postSuccess || patchSuccess) {
             setOpenModule(false)
         }
-    }, [postSuccess,patchSuccess])
+    }, [postSuccess, patchSuccess])
 
     // edit lesson
     const EditLesson = (element) => {
@@ -90,11 +90,12 @@ const AccordionAdmin = ({ data, edit, setIsPost }) => {
         setInitialValues({ id: element.id, title: element.title, price: element.price, isPaid: element.paid })
         setOpenModule(true)
     }
+
     // toggle accardion
     const handleOpen = (value) => setOpen(open === value ? 0 : value);
 
     // toggle module
-    const handleOpenModule = () => { setOpenModule(!openModule), setPost(true) };
+    const handleOpenModule = () => { setOpenModule(!openModule), setPost(true), setInitialValues(initialValueObjs) };
     return (
         <>
             <Accordion open={open === 1}>

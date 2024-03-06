@@ -10,7 +10,7 @@ const Checkbox = ({ label, name, ...rest }) => {
                     const { value } = field
                     return(
                         <label htmlFor={name} className="flex flex-row gap-2 items-center capitalize">
-                            <span>{label}</span>
+                            <span>{label || ""}</span>
                             <input  {...rest} type={"checkbox"} {...field} className='w-auto' name={name} checked={value} onChange={e => setFieldValue(name, e.target.checked)} />
                         </label>
                     )
